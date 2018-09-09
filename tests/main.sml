@@ -15,6 +15,10 @@ fun main _ =
         val () = (printResult "value1"
                   o bytesToString) value1
 
+        val () = (printResult "value1 KECCAK-256"
+                  o bytesToString
+                  o Sha3.keccak_256) value1
+
         val () = (printResult "value1 SHA3-256"
                   o bytesToString
                   o Sha3.sha3_256) value1
@@ -23,6 +27,10 @@ fun main _ =
 
         val () = (printResult "value2"
                   o bytesToString) value2
+
+        val () = (printResult "value2 KECCAK-256"
+                  o bytesToString
+                  o Sha3.keccak_256) value2
 
         val () = (printResult "value2 SHA3-256"
                   o bytesToString

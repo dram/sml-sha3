@@ -252,6 +252,15 @@ fun keccak (rate : int,
     end
 end
 
+fun keccak_224 (inputBytes : Word8Vector.vector) : Word8Vector.vector =
+    keccak (1152, 448, inputBytes, 0wx01, 224 div 8)
+fun keccak_256 (inputBytes : Word8Vector.vector) : Word8Vector.vector =
+    keccak (1088, 512, inputBytes, 0wx01, 256 div 8)
+fun keccak_384 (inputBytes : Word8Vector.vector) : Word8Vector.vector =
+    keccak (832, 768, inputBytes, 0wx01, 384 div 8)
+fun keccak_512 (inputBytes : Word8Vector.vector) : Word8Vector.vector =
+    keccak (576, 1024, inputBytes, 0wx01, 512 div 8)
+
 fun shake_128 (inputBytes : Word8Vector.vector,
                outputByteLen : int) : Word8Vector.vector =
     keccak (1344, 256, inputBytes, 0wx1f, outputByteLen)
