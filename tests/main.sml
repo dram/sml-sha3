@@ -21,10 +21,10 @@ fun main _ =
 
         val value2 = Byte.stringToBytes "abc"
 
-        val () = (printResult "value1"
+        val () = (printResult "value2"
                   o bytesToString) value2
 
-        val () = (printResult "value1 SHA3-256"
+        val () = (printResult "value2 SHA3-256"
                   o bytesToString
                   o Sha3.sha3_256) value2
     in
