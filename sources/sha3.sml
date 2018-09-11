@@ -61,15 +61,14 @@ local
                                 val lane = A.sub (lanes, x)
                                 val new_current = A.sub (lane, y)
                             in
-                                ( A.update (
-                                      lane,
-                                      y,
-                                      rol64 (current,
-                                             (t + 0w1) * (t + 0w2) div 0w2))
-                                ; loop (
-                                      t + 0w1, y, (2 * x + 3 * y) mod 5,
-                                      new_current))
-
+                                A.update (
+                                    lane,
+                                    y,
+                                    rol64 (current,
+                                           (t + 0w1) * (t + 0w2) div 0w2))
+                              ; loop (
+                                    t + 0w1, y, (2 * x + 3 * y) mod 5,
+                                    new_current)
                             end
                         else
                             ()
@@ -111,17 +110,16 @@ local
                                 W8.<< (R, 0w1), W8.>> (R, 0w7) * 0wx71)
                         val lane = A.sub (lanes, 0)
                     in
-                        ( if W8.andb (R', 0w2) <> 0w0 then
-                              A.update
-                                  (lane,
-                                   0,
-                                   (W64.xorb (
-                                         A.sub (lane, 0),
-                                         W64.<< (
-                                             0w1, Word.<< (0w1, j) - 0w1))))
-                          else
-                              ()
-                        ; iota_step (j + 0w1, R'))
+                        if W8.andb (R', 0w2) <> 0w0 then
+                            A.update
+                                (lane,
+                                 0,
+                                 W64.xorb (
+                                     A.sub (lane, 0),
+                                     W64.<< (0w1, Word.<< (0w1, j) - 0w1)))
+                        else
+                            ()
+                      ; iota_step (j + 0w1, R')
                     end
                 else
                     R
@@ -157,8 +155,8 @@ local
                         val byte = W8.fromLargeInt (W64.toLargeIntX w)
                         val rest = W64.>> (w, 0w8)
                     in
-                        ( A8.update (buffer, index + i, byte)
-                        ; loop (i + 1, rest))
+                        A8.update (buffer, index + i, byte)
+                      ; loop (i + 1, rest)
                     end
                 else
                     ()
@@ -173,14 +171,14 @@ local
                           A.tabulate (
                               5, fn y => load64 (state, 8 * (x + 5 * y))))
         in
-            ( keccak_f1600_on_lanes lanes
-            ; A.appi
-                  (fn (x, lane) =>
-                      A.appi
-                          (fn (y, value) =>
-                              store64 (state, 8 * (x + 5 * y), value))
-                          lane)
-                  lanes)
+            keccak_f1600_on_lanes lanes
+          ; A.appi
+                (fn (x, lane) =>
+                    A.appi
+                        (fn (y, value) =>
+                            store64 (state, 8 * (x + 5 * y), value))
+                        lane)
+                lanes
         end
 in
 fun keccak (rate : int,
@@ -203,18 +201,18 @@ fun keccak (rate : int,
                        val blockSize =
                            Int.min (inputSize - inputOffset, rateInBytes)
                    in
-                       ( V8S.appi
-                             (fn (i, byte) =>
-                                 A8.update (
-                                     state,
-                                     i,
-                                     W8.xorb (A8.sub (state, i), byte)))
-                             (V8S.slice (
-                                   inputBytes, inputOffset, SOME blockSize))
-                       ; if blockSize = rateInBytes then
-                             keccak_f1600 state
-                         else
-                             ())
+                       V8S.appi
+                           (fn (i, byte) =>
+                               A8.update (
+                                   state,
+                                   i,
+                                   W8.xorb (A8.sub (state, i), byte)))
+                           (V8S.slice (
+                                 inputBytes, inputOffset, SOME blockSize))
+                     ; if blockSize = rateInBytes then
+                           keccak_f1600 state
+                       else
+                           ()
                    end)
 
         (* padding *)
@@ -242,8 +240,8 @@ fun keccak (rate : int,
                             A8S.slice (state, 0, SOME blockSize))
                     val remainSize = len - blockSize
                 in
-                    ( if remainSize > 0 then keccak_f1600 state else ()
-                    ; V8.concat [segment, loop remainSize])
+                    if remainSize > 0 then keccak_f1600 state else ()
+                  ; V8.concat [segment, loop remainSize]
                 end
             else
                 V8.fromList []
